@@ -1,0 +1,21 @@
+# Build directories
+/build/
+**/build/
+
+# Gradle caches
+/.gradle/
+**/.gradle/
+
+# Local properties
+local.properties
+
+# Android Studio files
+.idea/
+*.iml
+
+# APK outputs
+*.apk
+*.aab
+
+# Misc
+.DS_Store
