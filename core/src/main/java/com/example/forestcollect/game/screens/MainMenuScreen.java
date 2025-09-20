@@ -2,7 +2,6 @@ package com.example.forestcollect.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -31,9 +30,7 @@ public class MainMenuScreen implements Screen {
         root.setFillParent(true);
         root.defaults().pad(30f);
 
-        Label title = new Label("Forest Collect", game.getUiSkin());
-        title.setFontScale(1.8f);
-        title.setColor(new Color(0.95f, 0.98f, 1f, 1f));
+        Label title = new Label("Forest Collect", game.getUiSkin(), "title");
 
         TextButton playButton = new TextButton("Играть", game.getUiSkin());
         TextButton settingsButton = new TextButton("Настройки", game.getUiSkin());

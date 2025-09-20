@@ -4,11 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.example.forestcollect.game.ForestCollectGame;
@@ -35,16 +37,15 @@ public class SettingsScreen implements Screen {
         root.setFillParent(true);
         root.defaults().pad(24f);
 
-        Label title = new Label("Настройки", game.getUiSkin());
-        title.setFontScale(1.6f);
+        Label title = new Label("Настройки", game.getUiSkin(), "title");
 
         graphicsSelector = new SelectBox<>(game.getUiSkin());
         graphicsSelector.setItems(GraphicsQuality.values());
         GraphicsQuality saved = getSavedQuality();
         graphicsSelector.setSelected(saved);
-        graphicsSelector.addListener(new ClickListener() {
+        graphicsSelector.addListener(new ChangeListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void changed(ChangeEvent event, Actor actor) {
                 saveQuality(graphicsSelector.getSelected());
             }
         });

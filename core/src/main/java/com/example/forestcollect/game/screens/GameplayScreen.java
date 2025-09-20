@@ -76,7 +76,7 @@ public class GameplayScreen implements Screen {
         coinLabel = new Label("Монет: 0", game.getUiSkin());
         coinLabel.setFontScale(1.2f);
 
-        qualityLabel = new Label("Графика: " + quality.name(), game.getUiSkin());
+        qualityLabel = new Label("Графика: " + quality.getDisplayName(), game.getUiSkin());
         qualityLabel.setFontScale(0.9f);
 
         Table leftBottom = new Table();
