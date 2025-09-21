@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Лесное Приключение</string>
+    <string name="button_play">Играть</string>
+    <string name="button_settings">Настройки</string>
+    <string name="title_settings">Настройки графики</string>
+    <string name="label_quality">Качество графики</string>
+    <string-array name="quality_options">
+        <item>Низкое</item>
+        <item>Среднее</item>
+        <item>Высокое</item>
+    </string-array>
+    <string name="label_coin_count">Монеты: %1$d / %2$d</string>
+    <string name="label_fps">FPS: %1$.0f</string>
+</resources>
