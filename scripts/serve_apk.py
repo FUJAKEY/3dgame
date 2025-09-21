@@ -4,7 +4,23 @@ import os
 import shutil
 import socketserver
 
-APK_PATH = os.environ.get("APK_PATH", "app/build/outputs/apk/release/app-release-unsigned.apk")
+DEFAULT_APK_CANDIDATES = (
+    "app/build/outputs/apk/release/app-release.apk",
+    "app/build/outputs/apk/debug/app-debug.apk",
+    "app/build/outputs/apk/release/app-release-unsigned.apk",
+)
+
+
+def resolve_apk_path():
+    override = os.environ.get("APK_PATH")
+    if override:
+        return override
+    for candidate in DEFAULT_APK_CANDIDATES:
+        if os.path.exists(candidate):
+            return candidate
+    return DEFAULT_APK_CANDIDATES[0]
+
+
 FILENAME = os.environ.get("APK_NAME", "ForestAdventure.apk")
 
 class ApkRequestHandler(http.server.BaseHTTPRequestHandler):
@@ -13,17 +29,18 @@ class ApkRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_error(404, "Not Found")
             return
 
-        if not os.path.exists(APK_PATH):
+        apk_path = resolve_apk_path()
+        if not os.path.exists(apk_path):
             self.send_error(404, "APK not found")
             return
 
         self.send_response(200)
         self.send_header("Content-Type", "application/vnd.android.package-archive")
         self.send_header("Content-Disposition", f"attachment; filename={FILENAME}")
-        self.send_header("Content-Length", str(os.path.getsize(APK_PATH)))
+        self.send_header("Content-Length", str(os.path.getsize(apk_path)))
         self.end_headers()
 
-        with open(APK_PATH, "rb") as apk_file:
+        with open(apk_path, "rb") as apk_file:
             shutil.copyfileobj(apk_file, self.wfile)
 
     def log_message(self, format, *args):

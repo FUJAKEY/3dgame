@@ -37,7 +37,7 @@ COPY . /opt/project
 RUN ./gradlew --no-daemon --console=plain assembleRelease
 
 EXPOSE 8000
-ENV APK_PATH=/opt/project/app/build/outputs/apk/release/app-release-unsigned.apk \
+ENV APK_PATH=/opt/project/app/build/outputs/apk/release/app-release.apk \
     APK_NAME=ForestAdventure.apk \
     PORT=8000
 

@@ -24,17 +24,17 @@
    ```bash
    ./gradlew assembleRelease
    ```
-3. Готовый APK появится по адресу `app/build/outputs/apk/release/app-release-unsigned.apk`.
-   При необходимости можно собрать отладочную сборку (подписанную debug-ключом):
+3. Готовый APK появится по адресу `app/build/outputs/apk/release/app-release.apk` (подписанный debug-ключом и готовый к установке).
+   При необходимости можно собрать отладочную сборку (она также подписана debug-ключом):
    ```bash
    ./gradlew assembleDebug
    ```
    Она создаст `app/build/outputs/apk/debug/app-debug.apk`.
 
 ## Запуск на устройстве
-1. Перенесите `app-release-unsigned.apk` (или `app-debug.apk`) на телефон или установите через `adb`:
+1. Перенесите `app-release.apk` (или `app-debug.apk`) на телефон или установите через `adb`:
    ```bash
-   adb install -r app/build/outputs/apk/release/app-release-unsigned.apk
+   adb install -r app/build/outputs/apk/release/app-release.apk
    ```
 2. Управление:
    - Левая половина экрана: виртуальный джойстик для движения.
