@@ -5,27 +5,23 @@ add_library(forestgame SHARED
     GameRenderer.cpp
     NativeBridge.cpp)
 
-find_library(log-lib log)
-find_library(android-lib android)
-find_library(gles-lib GLESv2)
-find_library(atomic-lib atomic)
-find_library(cpp-shared-lib c++_shared)
-
-if (NOT atomic-lib)
-    message(FATAL_ERROR "Failed to locate libatomic; required for std::atomic operations")
-endif()
-
-if (NOT cpp-shared-lib)
-    message(FATAL_ERROR "Failed to locate libc++_shared; ensure the NDK is installed correctly")
-endif()
+find_library(log_lib log REQUIRED)
+find_library(android_lib android REQUIRED)
+find_library(gles_lib GLESv2 REQUIRED)
+find_library(cpp_shared_lib c++_shared REQUIRED)
+find_library(atomic_lib atomic)
 
 set(FORESTGAME_DEPENDENCIES
-    ${log-lib}
-    ${android-lib}
-    ${gles-lib})
+    ${log_lib}
+    ${android_lib}
+    ${gles_lib}
+    ${cpp_shared_lib})
 
-list(APPEND FORESTGAME_DEPENDENCIES ${atomic-lib})
-list(APPEND FORESTGAME_DEPENDENCIES ${cpp-shared-lib})
+if (atomic_lib)
+    list(APPEND FORESTGAME_DEPENDENCIES ${atomic_lib})
+else()
+    message(STATUS "libatomic not provided for ${ANDROID_ABI}; relying on toolchain-built atomics")
+endif()
 
 target_include_directories(forestgame
     PRIVATE
