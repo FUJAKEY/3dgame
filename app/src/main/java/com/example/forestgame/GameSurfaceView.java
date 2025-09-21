@@ -13,7 +13,7 @@ public class GameSurfaceView extends GLSurfaceView {
 
     public GameSurfaceView(Context context, AttributeSet attrs, int qualityLevel) {
         super(context, attrs);
-        setEGLContextClientVersion(3);
+        setEGLContextClientVersion(2);
         renderer = new GameRenderer(qualityLevel);
         setRenderer(renderer);
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);

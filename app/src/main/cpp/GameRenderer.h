@@ -1,6 +1,7 @@
 #pragma once
 
-#include <GLES3/gl3.h>
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #include <android/log.h>
 #include <atomic>
 #include <chrono>
@@ -10,7 +11,6 @@
 #include "MathUtils.h"
 
 struct Mesh {
-    GLuint vao = 0;
     GLuint vbo = 0;
     GLuint ibo = 0;
     GLsizei indexCount = 0;
@@ -67,6 +67,8 @@ private:
     GLint uniformModel = -1;
     GLint uniformColor = -1;
     GLint uniformLightDir = -1;
+    GLint attributePosition = -1;
+    GLint attributeNormal = -1;
 
     Vec3 lightDirection = {-0.4f, -1.0f, -0.3f};
 

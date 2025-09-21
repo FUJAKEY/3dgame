@@ -7,7 +7,7 @@ add_library(forestgame SHARED
 
 find_library(log-lib log)
 find_library(android-lib android)
-find_library(gles-lib GLESv3)
+find_library(gles-lib GLESv2)
 
 target_include_directories(forestgame
     PRIVATE

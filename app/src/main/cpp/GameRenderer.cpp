@@ -1,6 +1,7 @@
 #include "GameRenderer.h"
 
 #include <algorithm>
+#include <cstddef>
 
 namespace {
 constexpr const char *TAG = "ForestGame";
@@ -21,25 +22,16 @@ Mesh createMesh(const std::vector<Vertex> &vertices, const std::vector<uint16_t>
         return mesh;
     }
 
-    glGenVertexArrays(1, &mesh.vao);
     glGenBuffers(1, &mesh.vbo);
-    glGenBuffers(1, &mesh.ibo);
-
-    glBindVertexArray(mesh.vao);
-
     glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
     glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vertices.size() * sizeof(Vertex)), vertices.data(), GL_STATIC_DRAW);
 
+    glGenBuffers(1, &mesh.ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(indices.size() * sizeof(uint16_t)), indices.data(), GL_STATIC_DRAW);
 
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void *>(0));
-
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void *>(sizeof(float) * 3));
-
-    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     mesh.indexCount = static_cast<GLsizei>(indices.size());
     return mesh;
@@ -53,10 +45,6 @@ void destroyMesh(Mesh &mesh) {
     if (mesh.vbo != 0) {
         glDeleteBuffers(1, &mesh.vbo);
         mesh.vbo = 0;
-    }
-    if (mesh.vao != 0) {
-        glDeleteVertexArrays(1, &mesh.vao);
-        mesh.vao = 0;
     }
     mesh.indexCount = 0;
 }
@@ -319,7 +307,9 @@ void GameRenderer::drawScene() {
     glUseProgram(shaderProgram);
 
     Vec3 lightDir = normalize(lightDirection);
-    glUniform3f(uniformLightDir, lightDir.x, lightDir.y, lightDir.z);
+    if (uniformLightDir >= 0) {
+        glUniform3f(uniformLightDir, lightDir.x, lightDir.y, lightDir.z);
+    }
 
     Mat4 groundModel = mat4Multiply(mat4Translation({0.0f, 0.0f, 0.0f}), mat4Scale({mapHalfSize, 1.0f, mapHalfSize}));
     drawMesh(groundMesh, groundModel, {0.36f, 0.68f, 0.32f});
@@ -380,34 +370,31 @@ void GameRenderer::ensureShaders() {
         return;
     }
 
-    const char *vertexShaderSource = R"(#version 300 es
-layout(location = 0) in vec3 aPosition;
-layout(location = 1) in vec3 aNormal;
+    const char *vertexShaderSource = R"(precision mediump float;
+attribute vec3 aPosition;
+attribute vec3 aNormal;
 
 uniform mat4 uMvp;
 uniform mat4 uModel;
 uniform vec3 uLightDir;
 
-out vec3 vNormal;
-out vec3 vLightDir;
+varying vec3 vNormal;
+varying vec3 vLightDir;
 
 void main() {
-    vec4 worldPosition = uModel * vec4(aPosition, 1.0);
-    vNormal = mat3(uModel) * aNormal;
+    vec3 worldNormal = mat3(uModel) * aNormal;
+    vNormal = worldNormal;
     vLightDir = -uLightDir;
     gl_Position = uMvp * vec4(aPosition, 1.0);
 }
 )";
 
-    const char *fragmentShaderSource = R"(#version 300 es
-precision mediump float;
+    const char *fragmentShaderSource = R"(precision mediump float;
 
-in vec3 vNormal;
-in vec3 vLightDir;
+varying vec3 vNormal;
+varying vec3 vLightDir;
 
 uniform vec3 uColor;
-
-out vec4 fragColor;
 
 void main() {
     vec3 normal = normalize(vNormal);
@@ -415,7 +402,7 @@ void main() {
     float diffuse = max(dot(normal, lightDir), 0.2);
     float ambient = 0.25;
     float intensity = clamp(diffuse + ambient, 0.0, 1.0);
-    fragColor = vec4(uColor * intensity, 1.0);
+    gl_FragColor = vec4(uColor * intensity, 1.0);
 }
 )";
 
@@ -446,10 +433,21 @@ void main() {
     glDeleteShader(fragmentShader);
 
     if (shaderProgram != 0) {
+        uniformMvp = -1;
+        uniformModel = -1;
+        uniformColor = -1;
+        uniformLightDir = -1;
+        attributePosition = -1;
+        attributeNormal = -1;
         uniformMvp = glGetUniformLocation(shaderProgram, "uMvp");
         uniformModel = glGetUniformLocation(shaderProgram, "uModel");
         uniformColor = glGetUniformLocation(shaderProgram, "uColor");
         uniformLightDir = glGetUniformLocation(shaderProgram, "uLightDir");
+        attributePosition = glGetAttribLocation(shaderProgram, "aPosition");
+        attributeNormal = glGetAttribLocation(shaderProgram, "aNormal");
+        if (attributePosition < 0 || attributeNormal < 0) {
+            __android_log_print(ANDROID_LOG_ERROR, TAG, "Missing vertex attributes: position=%d normal=%d", attributePosition, attributeNormal);
+        }
     }
 }
 
@@ -538,18 +536,40 @@ void GameRenderer::createWorld() {
 }
 
 void GameRenderer::drawMesh(const Mesh &mesh, const Mat4 &modelMatrix, const Vec3 &color) const {
-    if (mesh.vao == 0 || mesh.indexCount == 0) {
+    if (mesh.vbo == 0 || mesh.ibo == 0 || mesh.indexCount == 0) {
+        return;
+    }
+    if (attributePosition < 0 || attributeNormal < 0) {
         return;
     }
 
     Mat4 mvp = mat4Multiply(viewProjectionMatrix, modelMatrix);
-    glUniformMatrix4fv(uniformMvp, 1, GL_FALSE, mvp.m);
-    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, modelMatrix.m);
-    glUniform3f(uniformColor, color.x, color.y, color.z);
+    if (uniformMvp >= 0) {
+        glUniformMatrix4fv(uniformMvp, 1, GL_FALSE, mvp.m);
+    }
+    if (uniformModel >= 0) {
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, modelMatrix.m);
+    }
+    if (uniformColor >= 0) {
+        glUniform3f(uniformColor, color.x, color.y, color.z);
+    }
 
-    glBindVertexArray(mesh.vao);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
+
+    glEnableVertexAttribArray(static_cast<GLuint>(attributePosition));
+    glVertexAttribPointer(static_cast<GLuint>(attributePosition), 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void *>(0));
+
+    glEnableVertexAttribArray(static_cast<GLuint>(attributeNormal));
+    glVertexAttribPointer(static_cast<GLuint>(attributeNormal), 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void *>(offsetof(Vertex, nx)));
+
     glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_SHORT, nullptr);
-    glBindVertexArray(0);
+
+    glDisableVertexAttribArray(static_cast<GLuint>(attributePosition));
+    glDisableVertexAttribArray(static_cast<GLuint>(attributeNormal));
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void GameRenderer::updateProjection() {
