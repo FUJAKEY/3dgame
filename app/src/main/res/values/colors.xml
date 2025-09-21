@@ -1,0 +1,16 @@
+<resources>
+    <color name="md_theme_light_primary">#2E7D32</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#A5D6A7</color>
+    <color name="md_theme_light_onPrimaryContainer">#0B3D02</color>
+    <color name="md_theme_light_secondary">#FFB74D</color>
+    <color name="md_theme_light_onSecondary">#442200</color>
+    <color name="md_theme_dark_primary">#81C784</color>
+    <color name="md_theme_dark_onPrimary">#00390C</color>
+    <color name="md_theme_dark_primaryContainer">#1B5E20</color>
+    <color name="md_theme_dark_onPrimaryContainer">#C8E6C9</color>
+    <color name="md_theme_dark_secondary">#FFCC80</color>
+    <color name="md_theme_dark_onSecondary">#3B1E00</color>
+    <color name="joystick_base">#33FFFFFF</color>
+    <color name="joystick_handle">#CCFFB74D</color>
+</resources>

@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Forest Coins</string>
+    <string name="play">Играть</string>
+    <string name="settings">Настройки</string>
+    <string name="graphics_quality">Качество графики</string>
+    <string name="quality_low">Низкое</string>
+    <string name="quality_medium">Среднее</string>
+    <string name="quality_high">Высокое</string>
+    <string name="back">Назад</string>
+    <string name="coin_count">Монеты: %1$d / %2$d</string>
+    <string name="exit">Выйти</string>
+    <string name="graphics_quality_hint">Выберите качество графики, чтобы адаптировать производительность к вашему устройству.</string>
+</resources>
