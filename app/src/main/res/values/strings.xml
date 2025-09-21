@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Forest Quest</string>
+    <string name="play">Играть</string>
+    <string name="settings">Настройки</string>
+    <string name="graphics_quality">Качество графики</string>
+    <string name="quality_high">Высокое</string>
+    <string name="quality_medium">Среднее</string>
+    <string name="quality_low">Низкое</string>
+    <string name="coins_collected">Монет собрано: %1$d</string>
+    <string name="back">Назад</string>
+    <string name="graphics_label">Настройки графики</string>
+    <string name="graphics_description">Выберите качество графики, которое подходит вашему устройству.</string>
+</resources>
