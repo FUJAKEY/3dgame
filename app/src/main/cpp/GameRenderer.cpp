@@ -221,6 +221,7 @@ void GameRenderer::initialize(int width, int height, int qualityLevel) {
 
     lastFrameTime = std::chrono::steady_clock::now();
     hasLastFrame = false;
+    smoothedFps.store(60.0f, std::memory_order_relaxed);
     initialized = true;
 }
 
@@ -250,7 +251,9 @@ void GameRenderer::renderFrame() {
 
     if (deltaSeconds > 1e-4f) {
         float instantaneousFps = 1.0f / deltaSeconds;
-        smoothedFps = smoothedFps * 0.85f + instantaneousFps * 0.15f;
+        float previousFps = smoothedFps.load(std::memory_order_relaxed);
+        float blended = previousFps * 0.85f + instantaneousFps * 0.15f;
+        smoothedFps.store(blended, std::memory_order_relaxed);
     }
 }
 
@@ -358,11 +361,11 @@ int GameRenderer::collectedCoins() const {
 }
 
 int GameRenderer::totalCoins() const {
-    return totalCoinCount;
+    return totalCoinCount.load(std::memory_order_relaxed);
 }
 
 float GameRenderer::currentFps() const {
-    return smoothedFps;
+    return smoothedFps.load(std::memory_order_relaxed);
 }
 
 void GameRenderer::ensureShaders() {
@@ -514,11 +517,13 @@ void GameRenderer::createWorld() {
     }
 
     coins.clear();
-    totalCoinCount = std::min(desiredCoins, static_cast<int>(trees.size()));
+    int newTotalCoins = std::min(desiredCoins, static_cast<int>(trees.size()));
+    totalCoinCount.store(newTotalCoins, std::memory_order_relaxed);
     std::uniform_real_distribution<float> angleDist(0.0f, 2.0f * PI);
     std::uniform_real_distribution<float> radiusDist(1.4f, 2.8f);
 
-    for (int i = 0; i < totalCoinCount; ++i) {
+    coins.reserve(static_cast<size_t>(newTotalCoins));
+    for (int i = 0; i < newTotalCoins; ++i) {
         const auto &tree = trees[i];
         float angle = angleDist(rng);
         float radius = radiusDist(rng);
@@ -529,6 +534,7 @@ void GameRenderer::createWorld() {
     }
 
     collectedCoinCount.store(0);
+    smoothedFps.store(60.0f, std::memory_order_relaxed);
     playerPosition = {0.0f, playerHeight, mapHalfSize * 0.6f};
     cameraYaw = PI;
     cameraPitch = -0.15f;

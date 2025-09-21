@@ -92,10 +92,10 @@ private:
     bool hasLastFrame = false;
 
     std::atomic<int> collectedCoinCount{0};
-    int totalCoinCount = 0;
+    std::atomic<int> totalCoinCount{0};
 
     float coinRotation = 0.0f;
-    float smoothedFps = 60.0f;
+    std::atomic<float> smoothedFps{60.0f};
 };
 
 GameRenderer &renderer();
