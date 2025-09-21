@@ -1,8 +1,17 @@
 package com.example.forestgame;
 
+import android.util.Log;
+
 public final class GameNativeBridge {
+    private static final String TAG = "ForestGameNative";
+
     static {
-        System.loadLibrary("forestgame");
+        try {
+            System.loadLibrary("forestgame");
+        } catch (UnsatisfiedLinkError error) {
+            Log.e(TAG, "Не удалось загрузить библиотеку forestgame", error);
+            throw error;
+        }
     }
 
     private GameNativeBridge() {
