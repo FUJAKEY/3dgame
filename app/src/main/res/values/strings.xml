@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Forest Coins</string>
+    <string name="title_settings">Настройки графики</string>
+    <string name="button_play">Играть</string>
+    <string name="button_settings">Настройки</string>
+    <string name="settings_quality">Качество графики</string>
+    <string name="quality_low">Низкое</string>
+    <string name="quality_medium">Среднее</string>
+    <string name="quality_high">Высокое</string>
+    <string name="label_quality">Выберите качество:</string>
+    <string name="label_score">Монеты: %1$d</string>
+    <string name="label_time">Время: %1$.1f</string>
+    <string name="label_goal">Соберите монеты в лесу!</string>
+    <string name="quality_description">Измените детализацию леса для оптимальной производительности.</string>
+    <string name="button_back">Назад</string>
+</resources>

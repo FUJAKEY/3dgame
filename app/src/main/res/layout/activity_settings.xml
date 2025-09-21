@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/qualityTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/settings_quality"
+        android:textColor="@color/textPrimary"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/qualityDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="sans-serif"
+        android:text="@string/quality_description"
+        android:textColor="@color/textSecondary"
+        android:textSize="16sp" />
+
+    <RadioGroup
+        android:id="@+id/qualityGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/qualityLow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:text="@string/quality_low"
+            android:textColor="@color/textPrimary"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/qualityMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:text="@string/quality_medium"
+            android:textColor="@color/textPrimary"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/qualityHigh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:text="@string/quality_high"
+            android:textColor="@color/textPrimary"
+            android:textSize="18sp" />
+    </RadioGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:background="@drawable/button_primary"
+        android:text="@string/button_back"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
+</LinearLayout>
